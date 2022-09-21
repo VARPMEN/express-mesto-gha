@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { getDefaultError, getError } = require('../errors/errors');
+const { getDefaultError, getError, getUnfindError } = require('../errors/errors');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -9,9 +9,10 @@ const getUsers = (req, res) => {
 
 const getUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(() => getUnfindError(res, 'Пользователь с указанным _id не найден.'))
     .then((user) => res.send(user))
     .catch((err) => {
-      getError(err, res, '', 'Пользователь по указанному _id не найден.');
+      getError(err, res, 'при поиске пользователя');
     });
 };
 
@@ -29,9 +30,10 @@ const changeInfo = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail(() => getUnfindError(res, 'Пользователь с указанным _id не найден.'))
     .then((user) => res.send(user))
     .catch((err) => {
-      getError(err, res, 'при обновлении пользователя', 'Пользователь с указанным _id не найден.');
+      getError(err, res, 'при обновлении пользователя');
     });
 };
 
@@ -39,9 +41,10 @@ const changeAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .orFail(() => getUnfindError(res, 'Пользователь с указанным _id не найден.'))
     .then((user) => res.send(user))
     .catch((err) => {
-      getError(err, res, 'при обновлении аватара', 'Пользователь с указанным _id не найден.');
+      getError(err, res, 'при обновлении аватара');
     });
 };
 

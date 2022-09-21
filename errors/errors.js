@@ -14,11 +14,11 @@ const getIncorrectError = (res, mess) => {
   res.status(ERROR_INCORRECT).send({ message: `Переданы некорректные данные ${mess}.` });
 };
 
-const getError = (err, res, incorMess, unfindMess) => {
+const getError = (err, res, mess) => {
   if (err.name === 'ValidationError') {
-    getIncorrectError(res, incorMess);
+    getIncorrectError(res, mess);
   } else if (err.name === 'CastError') {
-    getUnfindError(res, unfindMess);
+    getIncorrectError(res, mess);
   } else {
     getDefaultError(res);
   }
