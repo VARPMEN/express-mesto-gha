@@ -24,4 +24,4 @@ const getError = (err, res, mess, unMess) => {
   }
 };
 
-module.exports = { getDefaultError, getError };
+module.exports = { getDefaultError, getError, getUnfindError };
