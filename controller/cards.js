@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { getDefaultError, getError, getUnfindError } = require('../errors/errors');
+const { getDefaultError, getError } = require('../errors/errors');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -20,10 +20,12 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => getUnfindError(res, 'Карточка с указанным _id не найдена.'))
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((card) => res.send(card))
     .catch((err) => {
-      getError(err, res, 'при удалении карточки');
+      getError(err, res, 'при удалении карточки', 'Карточка с указанным _id не найдена.');
     });
 };
 
@@ -33,19 +35,23 @@ const setLike = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => getUnfindError(res, 'Карточка с указанным _id не найдена.'))
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((card) => res.send(card))
     .catch((err) => {
-      getError(err, res, 'для постановки лайка');
+      getError(err, res, 'для постановки лайка', 'Карточка с указанным _id не найдена.');
     });
 };
 
 const removeLike = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .orFail(() => getUnfindError(res, 'Карточка с указанным _id не найдена.'))
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((card) => res.send(card))
     .catch((err) => {
-      getError(err, res, 'для снятии лайка');
+      getError(err, res, 'для снятии лайка', 'Карточка с указанным _id не найдена.');
     });
 };
 

@@ -14,14 +14,14 @@ const getIncorrectError = (res, mess) => {
   res.status(ERROR_INCORRECT).send({ message: `Переданы некорректные данные ${mess}.` });
 };
 
-const getError = (err, res, mess) => {
-  if (err.name === 'ValidationError') {
+const getError = (err, res, mess, unMess) => {
+  if ((err.name === 'ValidationError') || (err.name === 'CastError')) {
     getIncorrectError(res, mess);
-  } else if (err.name === 'CastError') {
-    getIncorrectError(res, mess);
+  } else if (err.name === 'NotFound') {
+    getUnfindError(res, unMess);
   } else {
     getDefaultError(res);
   }
 };
 
-module.exports = { getDefaultError, getError, getUnfindError };
+module.exports = { getDefaultError, getError };
