@@ -1,5 +1,11 @@
 const { celebrate, Joi } = require('celebrate');
 
+const idValidation = celebrate({
+  params: Joi.object().keys({
+    _id: Joi.string().alphanum().length(24),
+  }),
+});
+
 const cardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
@@ -38,5 +44,10 @@ const changeAvatarValidation = celebrate({
 });
 
 module.exports = {
-  cardValidation, userValidation, loginValidation, changeInfoValidation, changeAvatarValidation,
+  idValidation,
+  cardValidation,
+  userValidation,
+  loginValidation,
+  changeInfoValidation,
+  changeAvatarValidation,
 };
