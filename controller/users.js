@@ -10,7 +10,8 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  User.findById(req.params.userId)
+  const _id = req.params.userId;
+  User.findById(_id)
     .orFail(() => {
       throw new Error('NotFound');
     })
@@ -21,7 +22,8 @@ const getUser = (req, res) => {
 };
 
 const getMe = (req, res) => {
-  User.findById(req.user._id)
+  const { _id } = req.user;
+  User.findById(_id)
     .orFail(() => {
       throw new Error('NotFound');
     })

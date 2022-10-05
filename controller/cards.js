@@ -19,7 +19,9 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const _id = req.params.cardId;
+
+  Card.findByIdAndRemove(_id)
     .orFail(() => {
       throw new Error('NotFound');
     })
@@ -30,8 +32,9 @@ const deleteCard = (req, res) => {
 };
 
 const setLike = (req, res) => {
+  const _id = req.params.cardId;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    _id,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
@@ -45,7 +48,8 @@ const setLike = (req, res) => {
 };
 
 const removeLike = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+  const _id = req.params.cardId;
+  Card.findByIdAndUpdate(_id, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new Error('NotFound');
     })
