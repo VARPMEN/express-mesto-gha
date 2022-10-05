@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const { userValidation, loginValidation } = require('./middlewares/validation');
 const userRoute = require('./routes/users');
 const cardRoute = require('./routes/cards');
@@ -31,6 +32,7 @@ app.use(cardRoute);
 app.use('*', (req, res) => {
   getUnfindError(res, 'Указанный путь не существует.');
 });
+app.use(errors);
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
