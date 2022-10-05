@@ -32,7 +32,7 @@ app.use(cardRoute);
 app.use('*', (req, res) => {
   getUnfindError(res, 'Указанный путь не существует.');
 });
-app.use(errors);
+app.use(errors());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
