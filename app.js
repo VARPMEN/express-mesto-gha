@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
+const { userValidation, loginValidation } = require('./middlewares/validation');
 const userRoute = require('./routes/users');
 const cardRoute = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -20,8 +21,8 @@ app.use(helmet());
 
 app.use(cookieParser());
 
-app.use('/signin', loginUser);
-app.use('/signup', createUser);
+app.use('/signin', loginValidation, loginUser);
+app.use('/signup', userValidation, createUser);
 
 app.use(auth);
 
