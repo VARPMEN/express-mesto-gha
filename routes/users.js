@@ -8,7 +8,7 @@ router.get('/users', getUsers);
 
 router.get('/users/me', idValidation, getMe);
 
-router.get('/users/:userId', idValidation, getUser);
+router.get('/users/:_id', idValidation, getUser);
 
 router.patch('/users/me', changeInfoValidation, changeInfo);
 
