@@ -2,7 +2,7 @@ const { celebrate, Joi } = require('celebrate');
 
 const idValidation = celebrate({
   params: Joi.object().keys({
-    name: Joi.string().alphanum().length(24),
+    _id: Joi.string().alphanum().length(24),
   }),
 });
 
