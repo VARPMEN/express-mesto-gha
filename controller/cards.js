@@ -19,16 +19,18 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { _id } = req.params.owner;
-  if (!(_id === req.user._id)) {
-    throw new Error('Недостаточно прав!');
-  }
+  const userId = req.user._id;
 
   Card.findByIdAndRemove(req.params._id)
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card.owner._id === userId) {
+        throw new Error('Недостаточно прав');
+      }
+      res.send(card);
+    })
     .catch((err) => {
       getError(err, res, 'при удалении карточки', 'Карточка с указанным _id не найдена.');
     });
