@@ -1,7 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
 // eslint-disable-next-line no-useless-escape
-const linkRegExp = /^(https?\:\/\/)(www)?[\w\.\_\~\:\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]*\#?$/;
+const linkRegExp = /^(https?\:\/\/)(www)?[\w\.\_\~\:\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]*\#?$/gi;
 
 const idValidation = celebrate({
   params: Joi.object().keys({
