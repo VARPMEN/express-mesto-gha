@@ -19,6 +19,11 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
+  const { _id } = req.params.owner;
+  if (!(_id === req.user._id)) {
+    throw new Error('Недостаточно прав!');
+  }
+
   Card.findByIdAndRemove(req.params._id)
     .orFail(() => {
       throw new Error('NotFound');
