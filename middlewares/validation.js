@@ -1,5 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
+const linkRegExp = /^https?:\/\/(www)?[\w\-._~:?#[]@!\$&'()\*\+,;=]*#?$/;
+
 const idValidation = celebrate({
   params: Joi.object().keys({
     _id: Joi.string().alphanum().length(24),
@@ -17,7 +19,7 @@ const userValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(linkRegExp),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
@@ -39,7 +41,7 @@ const changeInfoValidation = celebrate({
 
 const changeAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(linkRegExp),
   }),
 });
 
