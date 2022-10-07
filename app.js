@@ -33,7 +33,7 @@ app.use('*', (req, res) => {
   getUnfindError(res, 'Указанный путь не существует.');
 });
 app.use(errors());
-app.use(((err, req, res, next) => {
+app.use(((err, req, res) => {
   res.status(err.statusCode).send({ message: err.message });
 }));
 
