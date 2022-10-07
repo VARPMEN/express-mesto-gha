@@ -1,11 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { throwError } = require('../errors/errors');
 const DefaultError = require('../errors/DefaultError');
 
 const UnfindError = require('../errors/UnfindError');
 const InvalidError = require('../errors/InvalidError');
+const UnuniqueError = require('../errors/UnuniqueError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -22,9 +22,6 @@ const getUser = (req, res, next) => {
       throw UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch((err) => {
-      throwError(err, 'при поиске пользователя');
-    })
     .catch(next);
 };
 
@@ -34,9 +31,6 @@ const getMe = (req, res, next) => {
       throw UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch((err) => {
-      throwError(err, 'при поиске пользователя');
-    })
     .catch(next);
 };
 
@@ -53,7 +47,9 @@ const createUser = (req, res, next) => {
       name: user.name, about: user.about, avatar: user.avatar, email: user.email,
     }))
     .catch((err) => {
-      throwError(err, 'при создании пользователя');
+      if (err.code === 11000) {
+        throw UnuniqueError('Прозователь уже существует!');
+      }
     })
     .catch(next);
 };
@@ -87,9 +83,6 @@ const changeInfo = (req, res, next) => {
       throw UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch((err) => {
-      throwError(err, 'при обновлении пользователя');
-    })
     .catch(next);
 };
 
@@ -101,9 +94,6 @@ const changeAvatar = (req, res, next) => {
       throw UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch((err) => {
-      throwError(err, 'при обновлении аватара');
-    })
     .catch(next);
 };
 

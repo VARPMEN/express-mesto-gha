@@ -8,7 +8,7 @@ const { userValidation, loginValidation } = require('./middlewares/validation');
 const userRoute = require('./routes/users');
 const cardRoute = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { getUnfindError } = require('./errors/errors');
+const UnfindError = require('./errors/UnfindError');
 const { loginUser, createUser } = require('./controller/users');
 
 const { PORT = 3000 } = process.env;
@@ -29,8 +29,8 @@ app.use(auth);
 
 app.use(userRoute);
 app.use(cardRoute);
-app.use('*', (req, res) => {
-  getUnfindError(res, 'Указанный путь не существует.');
+app.use('*', () => {
+  throw UnfindError('Указанный путь не существует.');
 });
 app.use(errors());
 app.use(((err, req, res) => {

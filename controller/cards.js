@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const { throwError } = require('../errors/errors');
 const DefaultError = require('../errors/DefaultError');
 const UnfindError = require('../errors/UnfindError');
 const ForbiddenError = require('../errors/ForbiddenError');
@@ -19,9 +18,6 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
-    .catch((err) => {
-      throwError(err, 'при создании карточки');
-    })
     .catch(next);
 };
 
@@ -39,9 +35,6 @@ const deleteCard = (req, res, next) => {
         res.send(card);
       }
     })
-    .catch((err) => {
-      throwError(err, 'при удалении карточки');
-    })
     .catch(next);
 };
 
@@ -55,9 +48,6 @@ const setLike = (req, res, next) => {
       throw UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => res.send(card))
-    .catch((err) => {
-      throwError(err, 'для постановки лайка');
-    })
     .catch(next);
 };
 
@@ -67,9 +57,6 @@ const removeLike = (req, res, next) => {
       throw UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => res.send(card))
-    .catch((err) => {
-      throwError(err, 'для снятии лайка');
-    })
     .catch(next);
 };
 
