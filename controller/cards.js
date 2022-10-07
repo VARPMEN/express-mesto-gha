@@ -29,7 +29,7 @@ const deleteCard = (req, res, next) => {
       throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => {
-      if (card.owner._id === userId) {
+      if (card.owner.toString() === userId) {
         Card.findByIdAndRemove(req.params._id)
           .then((removeCard) => {
             res.send(removeCard);
