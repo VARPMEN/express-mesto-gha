@@ -34,7 +34,15 @@ app.use('*', (req, res) => {
 });
 app.use(errors());
 app.use(((err, req, res) => {
-  res.status(err.statusCode).send({ message: err.message });
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(err.statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'Ошибка сервера'
+        : message,
+    });
 }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');

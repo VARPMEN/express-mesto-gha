@@ -1,5 +1,4 @@
 const IncorrectError = require('./IncorrectError');
-const DefaultError = require('./DefaultError');
 const UnuniqueError = require('./UnuniqueError');
 
 const throwError = (err, mess) => {
@@ -9,8 +8,6 @@ const throwError = (err, mess) => {
     throw IncorrectError(`Переданы некорректные данные ${mess}.`);
   } else if (err.code === 11000) {
     throw UnuniqueError('Невозможно зарегистрироваться! Пользователь уже существует.');
-  } else {
-    throw DefaultError('На сервере произошла ошибка.');
   }
 };
 

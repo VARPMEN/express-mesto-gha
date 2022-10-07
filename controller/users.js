@@ -11,7 +11,7 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(() => {
-      throw DefaultError('Ошибка сервера!');
+      throw DefaultError();
     })
     .catch(next);
 };
