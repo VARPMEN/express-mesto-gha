@@ -11,7 +11,7 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(() => {
-      throw DefaultError();
+      throw new DefaultError();
     })
     .catch(next);
 };
@@ -19,7 +19,7 @@ const getUsers = (req, res, next) => {
 const getUser = (req, res, next) => {
   User.findById(req.params._id)
     .orFail(() => {
-      throw UnfindError('Пользователь с указанным _id не найден.');
+      throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
     .catch(next);
@@ -28,7 +28,7 @@ const getUser = (req, res, next) => {
 const getMe = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
-      throw UnfindError('Пользователь с указанным _id не найден.');
+      throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
     .catch(next);
@@ -48,7 +48,7 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        throw UnuniqueError('Прозователь уже существует!');
+        throw new UnuniqueError('Прозователь уже существует!');
       }
     })
     .catch(next);
@@ -60,12 +60,12 @@ const loginUser = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw InvalidError('Почта или пароль указаны неверно');
+        throw new InvalidError('Почта или пароль указаны неверно');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw InvalidError('Почта или пароль указаны неверно');
+            throw new InvalidError('Почта или пароль указаны неверно');
           }
 
           const token = jwt.sign({ _id: user.id }, 'secret-key', { expiresIn: '7d' });
@@ -80,7 +80,7 @@ const changeInfo = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
-      throw UnfindError('Пользователь с указанным _id не найден.');
+      throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
     .catch(next);
@@ -91,7 +91,7 @@ const changeAvatar = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
-      throw UnfindError('Пользователь с указанным _id не найден.');
+      throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
     .catch(next);

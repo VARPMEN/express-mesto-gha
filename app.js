@@ -30,10 +30,11 @@ app.use(auth);
 app.use(userRoute);
 app.use(cardRoute);
 app.use('*', () => {
-  throw UnfindError('Указанный путь не существует.');
+  throw new UnfindError('Указанный путь не существует.');
 });
+
 app.use(errors());
-app.use(((err, req, res) => {
+app.use(((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
   res
@@ -43,6 +44,7 @@ app.use(((err, req, res) => {
         ? 'Ошибка сервера'
         : message,
     });
+  next();
 }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');

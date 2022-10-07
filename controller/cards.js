@@ -7,7 +7,7 @@ const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch(() => {
-      throw DefaultError();
+      throw new DefaultError();
     })
     .catch(next);
 };
@@ -26,11 +26,11 @@ const deleteCard = (req, res, next) => {
 
   Card.findByIdAndRemove(req.params._id)
     .orFail(() => {
-      throw UnfindError('Карточка с указанным _id не найдена.');
+      throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => {
       if (!card.owner._id === userId) {
-        throw ForbiddenError('Недостаточно прав');
+        throw new ForbiddenError('Недостаточно прав');
       } else {
         res.send(card);
       }
@@ -45,7 +45,7 @@ const setLike = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw UnfindError('Карточка с указанным _id не найдена.');
+      throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => res.send(card))
     .catch(next);
@@ -54,7 +54,7 @@ const setLike = (req, res, next) => {
 const removeLike = (req, res, next) => {
   Card.findByIdAndUpdate(req.params._id, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
-      throw UnfindError('Карточка с указанным _id не найдена.');
+      throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => res.send(card))
     .catch(next);
