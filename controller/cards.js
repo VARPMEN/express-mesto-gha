@@ -29,13 +29,13 @@ const deleteCard = (req, res, next) => {
       throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => {
-      if (!card.owner._id === userId) {
-        throw new ForbiddenError('Недостаточно прав');
-      } else {
+      if (card.owner._id === userId) {
         Card.findByIdAndRemove(req.params._id)
           .then((removeCard) => {
             res.send(removeCard);
           });
+      } else {
+        throw new ForbiddenError('Недостаточно прав');
       }
     })
     .catch(next);
