@@ -1,29 +1,17 @@
-const ERROR_INCORRECT = 400;
-const ERROR_UNFIND = 404;
-const ERROR_DEFAULT = 500;
+const IncorrectError = require('./IncorrectError');
+const DefaultError = require('./DefaultError');
+const UnuniqueError = require('./UnuniqueError');
 
-const getDefaultError = (res) => {
-  res.status(ERROR_DEFAULT).send({ message: 'На сервере произошла ошибка.' });
-};
-
-const getUnfindError = (res, mess) => {
-  res.status(ERROR_UNFIND).send({ message: `${mess}` });
-};
-
-const getIncorrectError = (res, mess) => {
-  res.status(ERROR_INCORRECT).send({ message: `Переданы некорректные данные ${mess}.` });
-};
-
-const getError = (err, res, mess, unMess) => {
+const throwError = (err, mess) => {
   if (err.name === 'ValidationError') {
-    getIncorrectError(res, mess);
+    throw IncorrectError(`Переданы некорректные данные ${mess}.`);
   } else if (err.name === 'CastError') {
-    getIncorrectError(res, mess);
-  } else if (err.message === 'NotFound') {
-    getUnfindError(res, unMess);
+    throw IncorrectError(`Переданы некорректные данные ${mess}.`);
+  } else if (err.code === 11000) {
+    throw UnuniqueError('Невозможно зарегистрироваться! Пользователь уже существует.');
   } else {
-    getDefaultError(res);
+    throw DefaultError('На сервере произошла ошибка.');
   }
 };
 
-module.exports = { getDefaultError, getError, getUnfindError };
+module.exports = { throwError };

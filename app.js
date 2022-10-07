@@ -33,6 +33,9 @@ app.use('*', (req, res) => {
   getUnfindError(res, 'Указанный путь не существует.');
 });
 app.use(errors());
+app.use(((err, req, res, next) => {
+  res.status(err.statusCode).send({ message: err.message });
+}));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
