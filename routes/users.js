@@ -6,7 +6,7 @@ const {
 
 router.get('/users', getUsers);
 
-router.get('/users/me', idValidation, getMe);
+router.get('/users/me', getMe);
 
 router.get('/users/:_id', idValidation, getUser);
 

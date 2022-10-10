@@ -2,18 +2,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const DefaultError = require('../errors/DefaultError');
-
 const UnfindError = require('../errors/UnfindError');
 const InvalidError = require('../errors/InvalidError');
 const UnuniqueError = require('../errors/UnuniqueError');
+const IncorrectError = require('../errors/IncorrectError');
 
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => {
-      throw new DefaultError();
-    })
-    .catch(next);
+    .catch(next(new DefaultError()));
 };
 
 const getUser = (req, res, next) => {
@@ -22,7 +19,13 @@ const getUser = (req, res, next) => {
       throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new IncorrectError('Переданы некорректные данные при поиске пользователя.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const getMe = (req, res, next) => {
@@ -48,10 +51,13 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        throw new UnuniqueError('Прозователь уже существует!');
+        next(new UnuniqueError('Прозователь уже существует!'));
+      } else if (err.name === 'ValidationError') {
+        next(new IncorrectError('Переданы некорректные данные при создании пользователя.'));
+      } else {
+        next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 const loginUser = (req, res, next) => {
@@ -83,7 +89,13 @@ const changeInfo = (req, res, next) => {
       throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new IncorrectError('Переданы некорректные данные при обновлении информации пользователя.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const changeAvatar = (req, res, next) => {
@@ -94,7 +106,13 @@ const changeAvatar = (req, res, next) => {
       throw new UnfindError('Пользователь с указанным _id не найден.');
     })
     .then((user) => res.send(user))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new IncorrectError('Переданы некорректные данные при обновлении аватара пользователя.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {

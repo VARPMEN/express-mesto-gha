@@ -2,14 +2,14 @@ const Card = require('../models/card');
 const DefaultError = require('../errors/DefaultError');
 const UnfindError = require('../errors/UnfindError');
 const ForbiddenError = require('../errors/ForbiddenError');
+const IncorrectError = require('../errors/IncorrectError');
 
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch(() => {
-      throw new DefaultError();
-    })
-    .catch(next);
+      next(new DefaultError());
+    });
 };
 
 const createCard = (req, res, next) => {
@@ -18,7 +18,13 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new IncorrectError('Переданы некорректные данные при создании карточки.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteCard = (req, res, next) => {
@@ -31,6 +37,9 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === userId) {
         Card.findByIdAndRemove(req.params._id)
+          .orFail(() => {
+            throw new UnfindError('Карточка с указанным _id не найдена.');
+          })
           .then((removeCard) => {
             res.send(removeCard);
           });
@@ -38,7 +47,13 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Недостаточно прав');
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new IncorrectError('Переданы некорректные данные при удалении карточки.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const setLike = (req, res, next) => {
@@ -51,7 +66,13 @@ const setLike = (req, res, next) => {
       throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => res.send(card))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new IncorrectError('Переданы некорректные данные при добавлении лайка.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const removeLike = (req, res, next) => {
@@ -60,7 +81,13 @@ const removeLike = (req, res, next) => {
       throw new UnfindError('Карточка с указанным _id не найдена.');
     })
     .then((card) => res.send(card))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new IncorrectError('Переданы некорректные данные при удалении лайка.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
