@@ -10,7 +10,9 @@ const IncorrectError = require('../errors/IncorrectError');
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(next(new DefaultError()));
+    .catch(() => {
+      next(new DefaultError());
+    });
 };
 
 const getUser = (req, res, next) => {
